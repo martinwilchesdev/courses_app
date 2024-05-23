@@ -8,12 +8,20 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,42 +40,55 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CoursesTheme {
-                CoursesApp(DataResource.topics)
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    CoursesApp(
+                        topics = DataResource.topics,
+                        modifier = Modifier.padding(innerPadding)
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-fun CoursesApp(topics: List<Topic>) {
-    TopicList(topics = topics)
+fun CoursesApp(topics: List<Topic>, modifier: Modifier) {
+    TopicList(topics = topics, modifier = modifier)
 }
 
 @Composable
 fun TopicCard(modifier: Modifier = Modifier, topic: Topic) {
-    Card {
-        Row {
+    Card(modifier.padding(8.dp)) {
+        Row(modifier.fillMaxWidth()) {
             Image(
                 painter = painterResource(id = topic.image),
-                contentDescription = null
+                contentDescription = null,
+                modifier
+                    .width(68.dp)
+                    .height(68.dp)
             )
             Column {
                 Spacer(modifier.height(16.dp))
                 Text(
                     stringResource(id = topic.name),
-                    modifier.padding(horizontal = 16.dp)
+                    modifier.padding(horizontal = 16.dp),
+                    style = MaterialTheme.typography.bodyMedium
                 )
-                Spacer(modifier.height(8.dp) )
-                Text(topic.relatedCourses.toString())
+                Spacer(modifier.height(8.dp))
+                Text(
+                    topic.relatedCourses.toString(),
+                    modifier.padding(horizontal = 16.dp),
+                    style = MaterialTheme.typography.labelMedium
+                )
             }
         }
     }
 }
 
 @Composable
-fun TopicList(topics: List<Topic>) {
-    LazyColumn {
-        items(topics) {topic ->
+fun TopicList(topics: List<Topic>, modifier: Modifier = Modifier) {
+    LazyVerticalGrid(columns = GridCells.Fixed(2), modifier) {
+        items(topics) { topic ->
             TopicCard(modifier = Modifier, topic = topic)
         }
     }
